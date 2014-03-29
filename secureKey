@@ -1,0 +1,22 @@
+#!/bin/sh
+
+## This script will encrypt an SSH key with OpenSSL
+## Although this can be done easily from CLi I am trying to remove a bit of the work
+
+inputKey=$1
+outputKey=$inputKey
+oldKey=${inputKey}.old
+
+if [[ -e ${inputKey} ]]; then
+	backupKey="mv $inputKey $oldKey"
+	eval $backupKey
+fi
+
+if [[ -e $oldKey ]]; then
+	inputKeyPassword=$2
+	outputKeyPassword=$3
+	
+	encrypt="openssl pkcs8 -topk8 -v2 des3 -in $oldKey -passin 'pass:$inputKeyPassword' -out $outputKey -passout 'pass:$outputKeyPassword'"
+	
+	eval $encrypt
+fi
